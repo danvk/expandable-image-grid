@@ -631,6 +631,13 @@ function partitionIntoRows(images, containerWidth, maxRowHeight) {
 }
 
 
+function reflow($container) {
+  var options = $container.data('og-options');
+  var $ul = $container.find('ul.og-grid');
+  flowImages($ul.find('li'), $ul.width(), options.rowHeight);
+}
+
+
 function flowImages(lis, width, maxRowHeight) {
   var rows = partitionIntoRows(lis, width, maxRowHeight);
   $.each(rows, function(_, row) {
@@ -649,7 +656,7 @@ function flowImages(lis, width, maxRowHeight) {
 
 /**
  * options = {
- *   maxRowHeight: NNN
+ *   rowHeight: NNN
  * }
  * images = [ { src: "", width: M, height: N, largesrc: "", id: "" }, ... ]
  */
@@ -673,9 +680,11 @@ $.fn.expandableGrid = function(options, images) {
     return $li.get(0);
   });
 
+  $(this).data('og-options', options);
+
   var $ul = $('<ul class=og-grid>').append($(lis).hide());
   $ul.appendTo(this.empty());
-  flowImages(lis, $(this).width(), options.rowHeight);
+  reflow(this);
   $(lis).show();
 
   Grid.init($ul.get(0));
@@ -685,7 +694,7 @@ $.fn.expandableGrid = function(options, images) {
 
 $(window).on('resize', function( event ) {
   $('ul.og-grid').each(function(_, ul) {
-    flowImages($(ul).find('li'), $(ul).width());
+    reflow($(ul).parent());
   });
 });
 
