@@ -1,0 +1,89 @@
+<!doctype html>
+<html>
+<head>
+  <title>Expandable grid demo</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script src="modernizr.custom.js"></script>
+  <script src="grid.js"></script>
+  <script src="grid-data.js"></script>
+  <link rel="stylesheet" href="grid.css" />
+  <style>
+    p.info { max-width: 800px; }
+    .main {
+      margin-right: 100px;
+      margin-top: 10px;
+      max-width: 800px;
+      -webkit-box-shadow: 0px 0px 5px 2px rgba(0,0,0,0.75);
+      -moz-box-shadow: 0px 0px 5px 2px rgba(0,0,0,0.75);
+      box-shadow: 0px 0px 5px 2px rgba(0,0,0,0.75);
+      background: rgb(213, 198, 122);
+    }
+  </style>
+</head>
+<body>
+  <p class="info">This demo shows how a grid can be created after the page loads.
+  See the <a href="demo.html">main demo</a> for more about the expandable image
+  grid plugin.</p>
+
+  <input type=checkbox id="preexpand"><label for="preexpand"> Pre-expand an image</label>
+  <button id="show">Display grid</button>
+  <button id="hide" disabled>Hide grid</button>
+
+  <div class="main" style="display: none">
+  </div>
+
+  <div id="og-details-template" style="display:none">
+    <h3 class="title">TESTING</h3>
+  </div>
+
+  <script type="text/javascript">
+    function thumbUrl(id) {
+      return 'https://s3.amazonaws.com/oldnyc/thumb/' + id + '.jpg';
+    }
+    function imageUrl(id) {
+      return 'https://s3.amazonaws.com/oldnyc/600px/' + id + '.jpg';
+    }
+
+    var rowHeight = 200;
+
+    $(function() {
+      var infos = $.map(recs, function(info, id) {
+        return $.extend({
+          id: id,
+          largesrc: imageUrl(id),
+          src: thumbUrl(id)
+        }, info);
+      });
+
+      var toggleButtons = function() {
+        $('button').each(function(_, btn) {
+          $(btn).prop('disabled', !$(btn).prop('disabled'));
+        });
+      }
+
+      $('#show').on('click', function() {
+        $('.main')
+          .show()
+          .expandableGrid({
+            rowHeight: 200
+          }, infos);
+        if ($('#preexpand').is(':checked')) {
+          $('.main').expandableGrid('select', '707577f-a');
+        }
+        toggleButtons();
+      });
+      $('#hide').on('click', function() {
+        $('.main').hide();
+        toggleButtons();
+      });
+
+      $('.main').on('og-select', 'li', function(e, div) {
+        var id = $(this).data('image-id');
+        $(div).empty().append(
+            $('#og-details-template').clone().removeAttr('id').show());
+        $(div).find('.title').text(recs[id].title);
+      });
+    });
+  </script>
+</body>
+</html>
