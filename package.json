@@ -1,6 +1,6 @@
 {
   "name": "expandable-image-grid",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "An expandable grid of images, ala Google Image Search",
   "repository": {
     "type": "git",
