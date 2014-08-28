@@ -1,0 +1,24 @@
+{
+  "name": "expandable-image-grid",
+  "version": "0.1.0",
+  "description": "An expandable grid of images, ala Google Image Search",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/danvk/expandable-image-grid.git"
+  },
+  "dependencies": {
+    "jquery": ">=1.9.1"
+  },
+  "devDependencies": {
+    "assert": "*",
+    "grunt": "~0.4.0",
+    "grunt-cli": "0.1.6",
+    "grunt-contrib-qunit": "~0.5.1",
+    "grunt-qunit-cov": "~0.3.6",
+    "phantomjs": "~1.9.7",
+    "qunitjs": "^1.14.0"
+  },
+  "scripts": {
+    "test": "grunt travis"
+  }
+}
