@@ -158,7 +158,7 @@ $special = $event.special.throttledresize = {
 
 })(jQuery);
 
-var Grid = (function() {
+var Grid = function() {
 
     // list of items
   var $grid = null,
@@ -341,8 +341,8 @@ var Grid = (function() {
       this.$fullimage = $( '<div class="og-fullimg"></div>' ).append( this.$loading );
       this.$closePreview = $( '<span class="og-close"></span>' );
       this.$previewInner = $( '<div class="og-expander-inner"></div>' ).append( this.$closePreview, this.$fullimage, this.$details );
-      this.$previewLeft = $('<div class="og-previous">&lt;</div>');
-      this.$previewRight = $('<div class="og-next">&gt;</div>');
+      this.$previewLeft = $('<div class="og-previous"></div>');
+      this.$previewRight = $('<div class="og-next"></div>');
       this.$previewEl = $( '<div class="og-expander"></div>' ).append( this.$previewInner, this.$previewLeft, this.$previewRight );
       // append preview element to the item
       this.$item.append( this.getEl() );
@@ -353,7 +353,6 @@ var Grid = (function() {
     },
 
     update : function( $item ) {
-
       if( $item ) {
         this.$item = $item;
       }
@@ -470,6 +469,8 @@ var Grid = (function() {
         }
 
       }, this ), 25 );
+
+      $grid.trigger('og-deselect');
       
       return false;
 
@@ -533,7 +534,7 @@ var Grid = (function() {
     addItems : addItems
   };
 
-})();
+};
 
 (function($) {
 
@@ -614,6 +615,10 @@ $.fn.expandableGrid = function(arg1) {
   } else if ($.type(arg1) === 'string') {
     if (arg1 === 'select') {
       meth = selectImage;
+    } else if (arg1 == 'deselect') {
+      meth = deselect;
+    } else if (arg1 == 'selectedId') {
+      meth = selectedId;
     }
   }
   if (!meth) {
@@ -649,16 +654,26 @@ var createExpandableGrid = function(options, images) {
   reflow(this);
   $(lis).show();
   loadVisibleImages(this);
-  $(this).on('scroll', function() {
-    loadVisibleImages($(this));  // new images may have become visible.
+  var container = this;
+  $([this, document]).on('scroll', function() {
+    loadVisibleImages($(container));  // new images may have become visible.
   });
 
-  Grid.init($ul.get(0));
+  g = Grid();
+  g.init($ul.get(0));
+  $(this).data('og-grid', g);
 
   return this;
 };
 
+var deselect = function(_) {
+  // TODO(danvk): remove this use of a global
+  // $.data(window, 'preview').close();
+  $(this).find('li.og-expanded > a').click();
+};
+
 var selectImage = function(_, id) {
+  // TODO(danvk): use $.data(this, 'preview').open() ?
   var $li = null;
   $(this).find('li').each(function(_, li) {
     if ($(li).data('image-id') == id) {
@@ -666,9 +681,16 @@ var selectImage = function(_, id) {
       return false;
     }
   });
-  if (!$li) return false;
+  if (!$li) {
+    return false;
+  }
 
   $li.children('a').click();
+  return true;
+};
+
+var selectedId = function() {
+  return $(this).find('li.og-expanded').data('image-id');
 };
 
 $(window).on('resize', function( event ) {

@@ -117,44 +117,6 @@
 	max-width: 100%;
 }
 
-.og-details h3 {
-	font-weight: 300;
-	font-size: 52px;
-	padding: 40px 0 10px;
-	margin-bottom: 10px;
-}
-
-.og-details p {
-	font-weight: 400;
-	font-size: 16px;
-	line-height: 22px;
-	color: #999;
-}
-
-.og-details a {
-	font-weight: 700;
-	font-size: 16px;
-	color: #333;
-	text-transform: uppercase;
-	letter-spacing: 2px;
-	padding: 10px 20px;
-	border: 3px solid #333;
-	display: inline-block;
-	margin: 30px 0 0;
-	outline: none;
-}
-
-.og-details a::before {
-	content: '\2192';
-	display: inline-block;
-	margin-right: 10px;
-}
-
-.og-details a:hover {
-	border-color: #999;
-	color: #999;
-}
-
 .og-loading {
 	width: 20px;
 	height: 20px;
@@ -174,16 +136,23 @@
   position: absolute;
   top: 50%;
   margin-top: -20px;
-  width: 20px;
-  height: 40px;
+  height: 23px;
+  width: 14px;
   line-height: 40px;
-  border: 1px solid hotpink;
 }
 .og-previous {
-  left: 0;
+  left: 10px;
+  background-image:url('arrow-left.png');
+}
+.og-previous:hover {
+  background-image:url('arrow-left-hover.png');
 }
 .og-next {
-  right: 0;
+  right: 5px;
+  background-image:url('arrow-right.png');
+}
+.og-next:hover {
+  background-image:url('arrow-right-hover.png');
 }
 
 @-webkit-keyframes loader {
