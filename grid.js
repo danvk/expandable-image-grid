@@ -12,65 +12,6 @@ $special,
 resizeTimeout;
 
 
-function clientRectIntersect(a, b) {
-  var left = Math.max(a.left, b.left);
-  var right = Math.min(a.right, b.right);
-  var top = Math.max(a.top, b.top);
-  var bottom = Math.min(a.bottom, b.bottom);
-  return {
-    left: left,
-    right: Math.max(left, right),
-    top: top,
-    bottom: Math.max(bottom, top),
-    width: Math.max(right - left, 0),
-    height: Math.max(bottom - top, 0)
-  };
-}
-
-
-// We check for visblity within:
-// 1. The window
-// 2. Containing scrollable elements
-function isElementInViewport(el) {
-  // special bonus for those using jQuery
-  if (el instanceof jQuery) {
-    el = el[0];
-  }
-
-  var elRect = el.getBoundingClientRect();
-  var windowRect = {
-    top: 0,
-    left: 0,
-    bottom: $(window).height(),
-    right: $(window).width(),
-    height: $(window).height(),
-    width: $(window).width()
-  };
-
-  elRect = clientRectIntersect(elRect, windowRect);
-  if (elRect.width * elRect.height == 0) return false;
-
-  var $scrollParents = scrollableParents(el);
-  for (var i = 0; i < $scrollParents.length; i++) {
-    var scrollParent = $scrollParents.get(i);
-    var scrollParentRect = scrollParent.getBoundingClientRect();
-    elRect = clientRectIntersect(elRect, scrollParentRect);
-    if (elRect.width * elRect.height == 0) return false;
-  }
-
-  return true;
-}
-
-function isElementScrollable(el) {
-  return el.scrollHeight > el.clientHeight;
-}
-
-function scrollableParents(node) {
-  return $(node).parents().filter(function(_, e) {
-    return isElementScrollable(e);
-  });
-}
-
 $special = $event.special.debouncedresize = {
   setup: function() {
     $( this ).on( "resize", $special.handler );
@@ -157,6 +98,71 @@ $special = $event.special.throttledresize = {
 };
 
 })(jQuery);
+
+
+var isElementInViewport = (function() {
+// Tools to determine if an Element is on-screen, including scrolling.
+function clientRectIntersect(a, b) {
+  var left = Math.max(a.left, b.left);
+  var right = Math.min(a.right, b.right);
+  var top = Math.max(a.top, b.top);
+  var bottom = Math.min(a.bottom, b.bottom);
+  return {
+    left: left,
+    right: Math.max(left, right),
+    top: top,
+    bottom: Math.max(bottom, top),
+    width: Math.max(right - left, 0),
+    height: Math.max(bottom - top, 0)
+  };
+}
+
+function isElementScrollable(el) {
+  return el.scrollHeight > el.clientHeight;
+}
+
+function scrollableParents(node) {
+  return $(node).parents().filter(function(_, e) {
+    return isElementScrollable(e);
+  });
+}
+
+// We check for visblity within:
+// 1. The window
+// 2. Containing scrollable elements
+function isElementInViewport(el) {
+  // special bonus for those using jQuery
+  if (el instanceof jQuery) {
+    el = el[0];
+  }
+
+  var elRect = el.getBoundingClientRect();
+  var windowRect = {
+    top: 0,
+    left: 0,
+    bottom: $(window).height(),
+    right: $(window).width(),
+    height: $(window).height(),
+    width: $(window).width()
+  };
+
+  elRect = clientRectIntersect(elRect, windowRect);
+  if (elRect.width * elRect.height == 0) return false;
+
+  var $scrollParents = scrollableParents(el);
+  for (var i = 0; i < $scrollParents.length; i++) {
+    var scrollParent = $scrollParents.get(i);
+    var scrollParentRect = scrollParent.getBoundingClientRect();
+    elRect = clientRectIntersect(elRect, scrollParentRect);
+    if (elRect.width * elRect.height == 0) return false;
+  }
+
+  return true;
+}
+
+return isElementInViewport;
+})();
+
 
 var Grid = function() {
 
@@ -662,6 +668,10 @@ var createExpandableGrid = function(options, images) {
   g = Grid();
   g.init($ul.get(0));
   $(this).data('og-grid', g);
+
+  // The initial display may have resulted in new scroll bars.
+  // It would be nice to avoid this.
+  reflow(this);
 
   return this;
 };
