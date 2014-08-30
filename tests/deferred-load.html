@@ -50,7 +50,7 @@
         rowHeight: 200
       }, infos);
 
-      $('.main').on('og-select', 'li', function(e, div) {
+      $('.main').on('og-fill', 'li', function(e, div) {
         var id = $(this).data('image-id');
         $(div).empty().append(
             $('#og-details-template').clone().removeAttr('id').show());

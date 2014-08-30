@@ -259,22 +259,27 @@ var Grid = function() {
     });
   }
 
-  function togglePreviewForItem($li) {
-    // check if item already opened
-    current === $li.index() ? hidePreview() : showPreview($li);
-  }
-
-  function initItemsEvents( $items ) {
-    $items.on( 'click', 'span.og-close', function() {
+  function initItemsEvents($items) {
+    $items.on('click', 'span.og-close', function() {
       hidePreview();
+      $(this).trigger('og-deselect');
       return false;
-    } ).children( 'a' ).on( 'click', function(e) {
-      // Here $item is the <li>
-      var $item = $( this ).parent();
-      togglePreviewForItem($item);
-      // TODO: fire og-select from here, not Preview.update().
+    }).children('a').on('click', function(e) {
+      var $li = $(this).parent();
+      // check if item already opened
+      if (current === $li.index()) {
+        hidePreview()
+        $li.trigger('og-deselect');
+      } else {
+        var previousSelection = current;
+        showPreview($li);
+        if (previousSelection == -1) {
+          $grid.trigger('og-openpreview');
+        }
+        $li.trigger('og-select');
+      }
       return false;
-    } );
+    });
   }
 
   function getWinSize() {
@@ -372,7 +377,7 @@ var Grid = function() {
           largesrc : $itemEl.data( 'largesrc' ),
         };
 
-      $(this.$item).trigger('og-select', this.$details);
+      $(this.$item).trigger('og-fill', this.$details);
 
       var self = this;
       
@@ -412,12 +417,14 @@ var Grid = function() {
         if (current > 0) {
           var $li = $items.eq(current - 1);
           showPreview($li);
+          $li.trigger('og-select');
         }
       };
       var goRight = function() {
         if (current < $items.length) {
           var $li = $items.eq(current + 1);
           showPreview($li);
+          $li.trigger('og-select');
         }
       };
       $('.og-previous, .og-next').on('click', function() {
@@ -434,6 +441,7 @@ var Grid = function() {
           goRight();
         } else if (e.keyCode == 27) {  // escape
           self.close();
+          $grid.trigger('og-deselect');
         }
       });
     },
@@ -450,61 +458,54 @@ var Grid = function() {
           self.$previewEl.remove();
         };
 
-      setTimeout( $.proxy( function() {
-
-        if( typeof this.$largeImg !== 'undefined' ) {
-          this.$largeImg.fadeOut( 'fast' );
+      setTimeout($.proxy(function() {
+        if (typeof this.$largeImg !== 'undefined') {
+          this.$largeImg.fadeOut('fast');
         }
-        this.$previewEl.css( 'height', 0 );
+        this.$previewEl.css('height', 0);
         // the current expanded item (might be different from this.$item)
-        var $expandedItem = $items.eq( this.expandedIdx );
-        $expandedItem.css( 'height', $expandedItem.data( 'height' ) ).one( transEndEventName, onEndFn );
+        var $expandedItem = $items.eq(this.expandedIdx);
+        $expandedItem.css('height', $expandedItem.data('height')).one(transEndEventName, onEndFn);
 
-        if( !support ) {
+        if (!support) {
           onEndFn.call();
         }
-
-      }, this ), 25 );
-
-      $grid.trigger('og-deselect');
+      }, this), 25);
       
       return false;
-
     },
-    calcHeight : function() {
 
+    calcHeight: function() {
       var heightPreview = winsize.height - this.$item.data( 'height' ) - marginExpanded,
         itemHeight = winsize.height;
 
-      if( heightPreview < settings.minHeight ) {
+      if (heightPreview < settings.minHeight) {
         heightPreview = settings.minHeight;
-        itemHeight = settings.minHeight + this.$item.data( 'height' ) + marginExpanded;
+        itemHeight = settings.minHeight + this.$item.data('height') + marginExpanded;
       }
 
       this.height = heightPreview;
       this.itemHeight = itemHeight;
-
     },
-    setHeights : function() {
 
+    setHeights: function() {
       var self = this,
         onEndFn = function() {
-          self.$item.addClass( 'og-expanded' );
+          self.$item.addClass('og-expanded');
         };
 
       this.calcHeight();
-      this.$previewEl.css( 'height', this.height );
+      this.$previewEl.css('height', this.height);
       this.$item
-        .css( 'height', this.itemHeight )
-        .one( transEndEventName, onEndFn );
+        .css('height', this.itemHeight)
+        .one(transEndEventName, onEndFn);
 
-      if( !support ) {
+      if (!support) {
         onEndFn.call();
       }
-
     },
-    positionPreview : function() {
 
+    positionPreview: function() {
       // scroll page
       // case 1 : preview height + item height fits in window´s height
       // case 2 : preview height + item height does not fit in window´s height and preview height is smaller than window´s height
@@ -513,13 +514,14 @@ var Grid = function() {
         previewOffsetT = this.$previewEl.offset().top - scrollExtra,
         scrollVal = this.height + this.$item.data( 'height' ) + marginExpanded <= winsize.height ? position : this.height < winsize.height ? previewOffsetT - ( winsize.height - this.height ) : previewOffsetT;
       
-      $body.animate( { scrollTop : scrollVal }, settings.speed );
+      $body.animate({ scrollTop : scrollVal }, settings.speed);
+    },
 
+    setTransition: function() {
+      this.$previewEl.css('transition', 'height ' + settings.speed + 'ms ' + settings.easing);
+      this.$item.css('transition', 'height ' + settings.speed + 'ms ' + settings.easing);
     },
-    setTransition  : function() {
-      this.$previewEl.css( 'transition', 'height ' + settings.speed + 'ms ' + settings.easing );
-      this.$item.css( 'transition', 'height ' + settings.speed + 'ms ' + settings.easing );
-    },
+
     getEl : function() {
       return this.$previewEl;
     }
@@ -528,11 +530,9 @@ var Grid = function() {
   return { 
     init: init,
     addItems: addItems,
-    togglePreviewForItem: togglePreviewForItem,
     showPreview: showPreview,
     hidePreview: hidePreview
   };
-
 };
 
 (function($) {
