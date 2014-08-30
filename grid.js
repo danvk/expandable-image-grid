@@ -265,17 +265,21 @@ var Grid = function() {
 
   }
 
+  function togglePreviewForItem($li) {
+    // check if item already opened
+    current === $li.index() ? hidePreview() : showPreview($li);
+  }
+
   function initItemsEvents( $items ) {
     $items.on( 'click', 'span.og-close', function() {
       hidePreview();
       return false;
     } ).children( 'a' ).on( 'click', function(e) {
-
+      // Here $item is the <li>
       var $item = $( this ).parent();
-      // check if item already opened
-      current === $item.index() ? hidePreview() : showPreview( $item );
+      togglePreviewForItem($item);
+      // TODO: fire og-select from here, not Preview.update().
       return false;
-
     } );
   }
 
@@ -531,7 +535,8 @@ var Grid = function() {
 
   return { 
     init : init,
-    addItems : addItems
+    addItems : addItems,
+    togglePreviewForItem : togglePreviewForItem
   };
 
 };
