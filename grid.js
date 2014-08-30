@@ -282,7 +282,6 @@ var Grid = function() {
   }
 
   function showPreview($item) {
-    // this = window here
     var preview = $.data($grid, 'preview'),
       // item´s offset top
       position = $item.data('offsetTop');
@@ -659,6 +658,7 @@ var createExpandableGrid = function(options, images) {
     loadVisibleImages($(container));  // new images may have become visible.
   });
 
+  // This should really be an object...
   g = Grid();
   g.init($ul.get(0));
   $(this).data('og-grid', g);
@@ -667,12 +667,10 @@ var createExpandableGrid = function(options, images) {
 };
 
 var deselect = function(_) {
-  // TODO(danvk): remove this use of a global
   $(this).data('og-grid').hidePreview();
 };
 
 var selectImage = function(_, id) {
-  // TODO(danvk): use $.data(this, 'preview').open() ?
   var $li = null;
   $(this).find('li').each(function(_, li) {
     if ($(li).data('image-id') == id) {
@@ -684,7 +682,7 @@ var selectImage = function(_, id) {
     return false;
   }
 
-  $li.children('a').click();
+  $(this).data('og-grid').showPreview($li);
   return true;
 };
 
