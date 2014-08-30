@@ -161,9 +161,9 @@ $special = $event.special.throttledresize = {
 var Grid = function() {
 
     // list of items
-  var $grid = null,
+  var $grid = null,  // $grid is the <ul>
     // the items
-    $items = null,
+    $items = null,  // these are the <li>s
     // current expanded item's index
     current = -1,
     // position (top) of the expanded item
@@ -252,7 +252,7 @@ var Grid = function() {
       // save item´s offset
       saveItemInfo();
       getWinSize();
-      var preview = $.data(this, 'preview');
+      var preview = $.data($grid, 'preview');
       if (typeof preview != 'undefined') {
         hidePreview();
       }
@@ -283,7 +283,7 @@ var Grid = function() {
 
   function showPreview($item) {
     // this = window here
-    var preview = $.data(this, 'preview'),
+    var preview = $.data($grid, 'preview'),
       // item´s offset top
       position = $item.data('offsetTop');
 
@@ -310,17 +310,16 @@ var Grid = function() {
     // update previewPos
     previewPos = position;
     // initialize new preview for the clicked item
-    preview = $.data(this, 'preview', new Preview($item));
+    preview = $.data($grid, 'preview', new Preview($item));
     // expand preview overlay
     preview.open();
-
   }
 
   function hidePreview() {
     current = -1;
-    var preview = $.data( this, 'preview' );
+    var preview = $.data($grid, 'preview');
     preview.close();
-    $.removeData( this, 'preview' );
+    $.removeData($grid, 'preview');
   }
 
   // the preview obj / overlay
@@ -528,9 +527,11 @@ var Grid = function() {
   }
 
   return { 
-    init : init,
-    addItems : addItems,
-    togglePreviewForItem : togglePreviewForItem
+    init: init,
+    addItems: addItems,
+    togglePreviewForItem: togglePreviewForItem,
+    showPreview: showPreview,
+    hidePreview: hidePreview
   };
 
 };
@@ -667,8 +668,7 @@ var createExpandableGrid = function(options, images) {
 
 var deselect = function(_) {
   // TODO(danvk): remove this use of a global
-  // $.data(window, 'preview').close();
-  $(this).find('li.og-expanded > a').click();
+  $(this).data('og-grid').hidePreview();
 };
 
 var selectImage = function(_, id) {
