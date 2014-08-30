@@ -173,7 +173,7 @@ var Grid = function() {
     scrollExtra = 0,
     // extra margin when expanded (between preview overlay and the next items)
     marginExpanded = 10,
-    $window = $( window ), winsize,
+    $window = $(window), winsize,
     $body = null,
     // transitionend events
     transEndEventNames = {
@@ -183,86 +183,80 @@ var Grid = function() {
       'msTransition' : 'MSTransitionEnd',
       'transition' : 'transitionend'
     },
-    transEndEventName = transEndEventNames[ Modernizr.prefixed( 'transition' ) ],
+    transEndEventName = transEndEventNames[Modernizr.prefixed('transition')],
     // support for csstransitions
     support = Modernizr.csstransitions,
     // default settings
     settings = {
-      minHeight : 500,
-      speed : 350,
-      easing : 'ease'
+      minHeight: 500,
+      speed: 350,
+      easing: 'ease'
     };
 
-  function init( grid, config ) {
-                $grid = $(grid);
-                $items = $grid.children('li');
-                $body = $( 'html, body' );
+  function init(grid, config) {
+    $grid = $(grid);
+    $items = $grid.children('li');
+    $body = $('html, body');
 
     // the settings..
-    settings = $.extend( true, {}, settings, config );
+    settings = $.extend(true, {}, settings, config);
 
-    // save item´s size and offset
-    saveItemInfo( true );
-    // get window´s size
+    // save item's size and offset
+    saveItemInfo(true);
+    // get window's size
     getWinSize();
     // initialize some events
     initEvents();
-
   }
 
   // add more items to the grid.
   // the new items need to appended to the grid.
   // after that call Grid.addItems(theItems);
-  function addItems( $newitems ) {
-
+  function addItems($newitems) {
     $items = $items.add( $newitems );
 
-    $newitems.each( function() {
-      var $item = $( this );
-      $item.data( {
-        offsetTop : $item.offset().top,
-        height : $item.height()
-      } );
-    } );
+    $newitems.each(function() {
+      var $item = $(this);
+      $item.data({
+        offsetTop: $item.offset().top,
+        height: $item.height()
+      });
+    });
 
-    initItemsEvents( $newitems );
-
+    initItemsEvents($newitems);
   }
 
   // saves the item´s offset top and height (if saveheight is true)
-  function saveItemInfo( saveheight ) {
-    $items.each( function() {
-      var $item = $( this );
-      $item.data( 'offsetTop', $item.offset().top );
+  function saveItemInfo(saveheight) {
+    $items.each(function() {
+      var $item = $(this);
+      $item.data('offsetTop', $item.offset().top);
       if( saveheight ) {
-        $item.data( 'height', $item.height() );
+        $item.data('height', $item.height());
       }
-    } );
+    });
   }
 
   function initEvents() {
-    
-    // when clicking an item, show the preview with the item´s info and large image.
+    // when clicking an item, show the preview with the item´s info and large
+    // image.
     // close the item if already expanded.
     // also close if clicking on the item´s cross
-    initItemsEvents( $items );
+    initItemsEvents($items);
     
     // on window resize get the window´s size again
     // reset some values..
-    $window.on( 'debouncedresize', function() {
-      
+    $window.on('debouncedresize', function() {
       scrollExtra = 0;
       previewPos = -1;
       // save item´s offset
       saveItemInfo();
       getWinSize();
-      var preview = $.data( this, 'preview' );
-      if( typeof preview != 'undefined' ) {
+      var preview = $.data(this, 'preview');
+      if (typeof preview != 'undefined') {
         hidePreview();
       }
-
-    } );
-
+    });
   }
 
   function togglePreviewForItem($li) {
@@ -287,36 +281,36 @@ var Grid = function() {
     winsize = { width : $window.width(), height : $window.height() };
   }
 
-  function showPreview( $item ) {
-    var preview = $.data( this, 'preview' ),
+  function showPreview($item) {
+    // this = window here
+    var preview = $.data(this, 'preview'),
       // item´s offset top
-      position = $item.data( 'offsetTop' );
+      position = $item.data('offsetTop');
 
     scrollExtra = 0;
 
-    // if a preview exists and previewPos is different (different row) from item´s top then close it
-    if( typeof preview != 'undefined' ) {
-
+    // if a preview exists and previewPos is different (different row) from
+    // item's top then close it
+    if (typeof preview != 'undefined') {
       // not in the same row
-      if( previewPos !== position ) {
-        // if position > previewPos then we need to take te current preview´s height in consideration when scrolling the window
-        if( position > previewPos ) {
+      if (previewPos !== position) {
+        // if position > previewPos then we need to take te current preview's
+        // height in consideration when scrolling the window
+        if (position > previewPos) {
           scrollExtra = preview.height;
         }
         hidePreview();
-      }
-      // same row
-      else {
-        preview.update( $item );
+      } else {
+        // same row 
+        preview.update($item);
         return false;
       }
-      
     }
 
     // update previewPos
     previewPos = position;
     // initialize new preview for the clicked item
-    preview = $.data( this, 'preview', new Preview( $item ) );
+    preview = $.data(this, 'preview', new Preview($item));
     // expand preview overlay
     preview.open();
 
@@ -330,7 +324,7 @@ var Grid = function() {
   }
 
   // the preview obj / overlay
-  function Preview( $item ) {
+  function Preview($item) {
     this.$item = $item;
     this.expandedIdx = this.$item.index();
     this.create();
@@ -349,9 +343,9 @@ var Grid = function() {
       this.$previewRight = $('<div class="og-next"></div>');
       this.$previewEl = $( '<div class="og-expander"></div>' ).append( this.$previewInner, this.$previewLeft, this.$previewRight );
       // append preview element to the item
-      this.$item.append( this.getEl() );
+      this.$item.append(this.getEl());
       // set the transitions for the preview and the item
-      if( support ) {
+      if (support) {
         this.setTransition();
       }
     },
@@ -419,13 +413,13 @@ var Grid = function() {
       var goLeft = function() {
         if (current > 0) {
           var $li = $items.eq(current - 1);
-          $li.children('a').click();
+          showPreview($li);
         }
       };
       var goRight = function() {
         if (current < $items.length) {
           var $li = $items.eq(current + 1);
-          $li.children('a').click();
+          showPreview($li);
         }
       };
       $('.og-previous, .og-next').on('click', function() {
