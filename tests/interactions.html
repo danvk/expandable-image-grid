@@ -9,11 +9,7 @@
   <link rel="stylesheet" href="../grid.css" />
   <link rel="stylesheet" href="../node_modules/qunitjs/qunit/qunit.css">
   <style>
-    /* short enough that there will be a scroll bar */
     .main {
-      width: 640px;
-      height: 480px;
-      overflow: scroll;
     }
   </style>
 </head>
@@ -46,7 +42,8 @@
       });
 
       $('.main').expandableGrid({
-        rowHeight: 200
+        rowHeight: 200,
+        speed: 100
       }, infos);
 
       $('.main').on('og-fill', 'li', function(e, div) {
@@ -60,6 +57,6 @@
 
   <div id="qunit"></div>
   <div id="qunit-fixture"></div>
-  <script src="deferred-load.js"></script>
+  <script src="interactions.js"></script>
 </body>
 </html>

@@ -62,3 +62,6 @@ QUnit.test('All images are loaded after scrolling to bottom', function(assert) {
 
   $main.scrollTop(0);  // reset for subsequent tests
 });
+
+// TODO: test expanding and then contracting, which may show additional
+// images.
