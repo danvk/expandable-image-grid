@@ -2,8 +2,15 @@ QUnit.test( 'hello test', function(assert) {
   assert.ok(1 == '1', 'Passed!');
 });
 
-// TODO: Look up QUnit.asyncTest; this needs to be one.
-QUnit.test('Expand and collapse', function(assert) {
+function wait(ms) {
+  var promise = $.Deferred();
+  window.setTimeout(function() {
+    promise.resolve({});
+  }, ms);
+  return promise;
+}
+
+QUnit.asyncTest('Expand and collapse', function(assert) {
   var $grid = $('.main');
   var numSelects = 0, numDeselects = 0, numFills = 0;
   $grid.on('og-select', function(e, photo_id) {
@@ -18,22 +25,37 @@ QUnit.test('Expand and collapse', function(assert) {
   assert.equal(numDeselects, 0);
   assert.equal(numSelects, 0);  // not in response to a user event.
   assert.equal(numFills, 1);
-  assert.equal($grid.find('.og-expanded').length, 1);
 
-  // A click does trigger a select event.
-  $grid.find('li:nth-child(3) a').click()
+  wait(200).then(function() {
+    assert.equal($grid.find('.og-expanded').length, 1);
 
-  assert.equal(numDeselects, 0);
-  assert.equal(numSelects, 1);
-  assert.equal(numFills, 2);
-  assert.equal($grid.find('.og-expanded').length, 1);
+    // A click does trigger a select event.
+    $grid.find('li:nth-child(3) a').click()
 
-  // A second click closes the preview panel.
-  $grid.find('li:nth-child(3) a').click()
-  assert.equal(numDeselects, 1);
-  assert.equal(numSelects, 1);
-  assert.equal(numFills, 2);
-  assert.equal($grid.find('.og-expanded').length, 0);
+    assert.equal(numDeselects, 0);
+    assert.equal(numSelects, 1);
+    assert.equal(numFills, 2);
+    assert.equal($grid.find('.og-expanded').length, 1);
+
+    // A second click closes the preview panel.
+    $grid.find('li:nth-child(3) a').click()
+
+    wait(200).then(function() {
+      assert.equal(numDeselects, 1);
+      assert.equal(numSelects, 1);
+      assert.equal(numFills, 2);
+      assert.equal($grid.find('.og-expanded').length, 0);
+
+      QUnit.start();
+    });
+  });
+});
+
+
+// This has failed in the past!
+QUnit.asyncTest('Expanded images should have the same top', function(assert) {
+  var $main = $('.main');
+  var $grid = $('.main .og-grid');
 });
 
 // TODO: right-arrow through all the images.
