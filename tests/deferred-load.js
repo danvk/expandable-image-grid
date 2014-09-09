@@ -75,4 +75,6 @@ QUnit.asyncTest('Expanded images should have the same top', function(assert) {
   var $grid = $('.main .og-grid');
 
   // ...
+  assert.ok(true);
+  QUnit.start();
 });
