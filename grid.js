@@ -666,7 +666,6 @@ var createExpandableGrid = function(options, images) {
   $ul.appendTo(this.empty());
   reflow(this);
   $(lis).show();
-  $ul.append($('<div class=og-spacer>'));
   loadVisibleImages(this);
   var container = this;
   $([this.get(0), document]).on('scroll', function() {
