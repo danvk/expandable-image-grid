@@ -487,15 +487,16 @@ var Grid = function() {
       var maxMargin = 100;  // image height + margin == previewHeight
       var scrollParents = scrollableParents($grid),
           $scrollParent = $(scrollParents.get(0)),
+          scrollParentHeight = Math.min($scrollParent.height(), $(window).height()),
           thumbnailHeight = this.$item.data('height'),
-          previewHeight = $scrollParent.height() - thumbnailHeight - 50;
+          previewHeight = scrollParentHeight - thumbnailHeight - 50;
 
       if (previewHeight > settings.maxHeight) {
         previewHeight = settings.maxHeight;
       }
 
       this.previewHeight = previewHeight;  // this.$item.data('eg-height');  // height of image
-      this.itemHeight = $scrollParent.height() - 40;
+      this.itemHeight = scrollParentHeight - 40;
     },
 
     setHeights: function() {
@@ -522,10 +523,9 @@ var Grid = function() {
       // case 3 : preview height + item height does not fit in window´s height and preview height is bigger than window´s height
       var $item = this.$item;
       var scrollParents = scrollableParents($grid),
-          $scrollParent = $(scrollParents.get(0)),
-          scrollTop = $scrollParent.scrollTop();
+          $scrollParent = $(scrollParents.get(0));
       $scrollParent.animate(
-          {scrollTop: $item.position().top + scrollTop},
+          {scrollTop: $item.position().top},
           settings.speed);
     },
 
