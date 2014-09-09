@@ -68,3 +68,11 @@ QUnit.asyncTest('All images are loaded after scrolling to bottom', function(asse
 
 // TODO: test expanding and then contracting, which may show additional
 // images.
+
+// This has failed in the past!
+QUnit.asyncTest('Expanded images should have the same top', function(assert) {
+  var $main = $('.main');
+  var $grid = $('.main .og-grid');
+
+  // ...
+});

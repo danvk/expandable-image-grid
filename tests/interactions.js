@@ -52,10 +52,30 @@ QUnit.asyncTest('Expand and collapse', function(assert) {
 });
 
 
-// This has failed in the past!
-QUnit.asyncTest('Expanded images should have the same top', function(assert) {
-  var $main = $('.main');
-  var $grid = $('.main .og-grid');
-});
+// Regression test for https://github.com/danvk/expandable-image-grid/issues/6 
+QUnit.asyncTest('Right from rightmost image', function(assert) {
+  $(window).scrollTop(0);
+  var $grid = $('.main');
 
-// TODO: right-arrow through all the images.
+  // Select the rightmost image.
+  $grid.expandableGrid('select', '723097f-a');
+
+  wait(200).then(function() {
+    // Image's top should be within ~20px of the top of the viewport.
+    var top = $grid.find('img').get(4).getBoundingClientRect().top;
+    assert.ok(Math.abs(top) < 20, 'Image is not close enough to top! ' + top);
+
+    // Now click the right arrow in the expanded panel.
+    var $right = $grid.find('.og-next');
+    assert.ok(1 == $right.length);
+    $right.click();
+
+    wait(200).then(function() {
+      // New selected image's top should still be near the viewport top.
+      var top = $grid.find('img').get(5).getBoundingClientRect().top;
+      assert.ok(Math.abs(top) < 20, 'Image is not close enough to top! ' + top);
+
+      QUnit.start();
+    })
+  });
+});
