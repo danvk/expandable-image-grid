@@ -2,9 +2,6 @@
 <html>
 <head>
   <title>Expandable grid demo</title>
-  <!--
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-  -->
   <script src="node_modules/jquery/dist/cdn/jquery-2.1.1.min.js"></script>
   <script src="modernizr.custom.js"></script>
   <script src="grid.js"></script>
@@ -12,7 +9,11 @@
   <link rel="stylesheet" href="grid.css" />
   <link rel="stylesheet" href="demo.css" />
   <style>
-    p.info { max-width: 800px; }
+    p.info {
+      margin: 0;
+      padding: 15px;
+      max-width: 800px;
+    }
     .scroll-container {
       position: fixed;
       top: 100px;
@@ -24,11 +25,13 @@
     html,body{
       width: 100%;
       height: 100%;
+      margin: 0;
+      padding: 0;
     }
   </style>
 </head>
 <body>
-  <p class="info">The <a href="https://github.com/danvk/expandable-image-grid">Expandable Image Grid</a> jQuery plugin creates a UI similar to that of the Google Image Search results: you get a grid of images with a clean right margin and animated inline expansion. View source to learn how to use it. Based on <a href="http://tympanus.net/codrops/2013/03/19/thumbnail-grid-with-expanding-preview/">this article<a/> on Codrops.</p>
+  <p class="info">The <a href="https://github.com/danvk/expandable-image-grid">Expandable Image Grid</a> jQuery plugin creates a UI similar to that of the Google Image Search results: you get a grid of images with a clean right margin and animated inline expansion. View source to learn how to use it. Based on <a href="http://tympanus.net/codrops/2013/03/19/thumbnail-grid-with-expanding-preview/">this article</a> on Codrops.</p>
 
   <div class="scroll-container">
     <div class="main"></div>
