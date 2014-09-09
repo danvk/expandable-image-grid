@@ -525,9 +525,10 @@ var Grid = function() {
       // Scroll the newly-selected item to the top of the page.
       var $item = this.$item;
       var scrollParents = scrollableParents($grid),
-          $scrollParent = $(scrollParents.get(0));
+          $scrollParent = $(scrollParents.get(0)),
+          parentTop = $item.parent().position().top;
       $scrollParent.animate(
-          {scrollTop: $item.position().top},
+          {scrollTop: $item.position().top - parentTop},
           settings.speed);
     },
 
