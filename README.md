@@ -1,3 +1,6 @@
+[![Build Status](https://travis-ci.org/danvk/expandable-image-grid.svg?branch=master)](https://travis-ci.org/danvk/expandable-image-grid.svg?branch=master)
+
+
 expandable-image-grid
 =====================
 
