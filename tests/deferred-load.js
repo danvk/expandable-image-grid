@@ -32,7 +32,7 @@ QUnit.test('Top images are initially loaded', function(assert) {
   assert.equal(hasSrc($imgs.get(14)), false);
 });
 
-QUnit.test('All images are loaded after scrolling to bottom', function(assert) {
+QUnit.asyncTest('All images are loaded after scrolling to bottom', function(assert) {
   var $main = $('.main');
   var $grid = $('.main .og-grid');
 
@@ -50,17 +50,20 @@ QUnit.test('All images are loaded after scrolling to bottom', function(assert) {
   assert.equal(hasSrc($imgs.get(13)), false);
   assert.equal(hasSrc($imgs.get(14)), false);
 
-  $main.scrollTop($main.get(0).scrollHeight);  // scroll to bottom
-  $main.scroll();  // 'scroll' event usually fires async; this forces sync.
+  $main.scrollTop(500);  // scroll to the bottom images.
 
-  assert.equal(hasSrc($imgs.get( 9)), true);
-  assert.equal(hasSrc($imgs.get(10)), true);
-  assert.equal(hasSrc($imgs.get(11)), true);
-  assert.equal(hasSrc($imgs.get(12)), true);
-  assert.equal(hasSrc($imgs.get(13)), true);
-  assert.equal(hasSrc($imgs.get(14)), true);
+  window.setTimeout(function() {
+    assert.equal(hasSrc($imgs.get( 9)), true);
+    assert.equal(hasSrc($imgs.get(10)), true);
+    assert.equal(hasSrc($imgs.get(11)), true);
+    assert.equal(hasSrc($imgs.get(12)), true);
+    assert.equal(hasSrc($imgs.get(13)), true);
+    assert.equal(hasSrc($imgs.get(14)), true);
 
-  $main.scrollTop(0);  // reset for subsequent tests
+    $main.scrollTop(0);  // reset for subsequent tests
+    
+    QUnit.start();  // tell QUnit that this test is complete.
+  }, 500 /* ms */);
 });
 
 // TODO: test expanding and then contracting, which may show additional
