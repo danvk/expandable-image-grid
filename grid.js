@@ -527,6 +527,9 @@ var Grid = function() {
       var scrollParents = scrollableParents($grid),
           $scrollParent = $(scrollParents.get(0)),
           parentTop = $item.parent().position().top;
+      if ($scrollParent.get(0).tagName == 'BODY') {
+        parentTop = 0;  // .position() already accounts for <body>
+      }
       $scrollParent.animate(
           {scrollTop: $item.position().top - parentTop},
           settings.speed);
